@@ -1,15 +1,22 @@
 {
-  "name": "students-list",
+  "name": "react-github-list",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:4000",
   "dependencies": {
-    "react": "^16.3.0",
-    "react-dom": "^16.3.0",
-    "react-scripts": "1.1.1"
+    "axios": "^0.17.1",
+    "mongoose": "^5.0.3",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "1.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.14.11"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts build && node server/server.js",
+    "client": "react-scripts start",
+    "server": "nodemon server/server.js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }
