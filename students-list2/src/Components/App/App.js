@@ -22,20 +22,20 @@ class App extends Component {
     axios.post('/students', newStudent)
       .then(res => {
         console.log(res);
+        // after successful post, get all students in the database:
+        axios.get('/students')
+          .then(result => {
+            console.log("new res", result);
+          })
+          .catch(error => {
+            console.log(error);
+          });
       })
       .catch(err => {
         // yes, very helpful:
         console.log(err.response);
-      })
+      });
 
-      // axios({
-      //   method: 'post',
-      //   url: '/',
-      //   data: {
-      //     firstName: 'Fred',
-      //     lastName: 'Flintstone'
-      //   }
-      // });
   }
 
   render() {

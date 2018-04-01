@@ -11,21 +11,6 @@ app.use(express.static('build'));
 /** ---------- EXPRESS ROUTES ---------- **/
 app.use('/students', students);
 
-// POST Route
-app.post('/', function (req, res) {
-    console.log('postin');
-    console.log(req.body);
-    var studentToAdd = new Student(req.body);
-    studentToAdd.save(function (err, data) {
-        if (err) {
-            console.log(err);
-            res.sendStatus(500);
-        } else {
-            res.sendStatus(201);
-        }
-    }); // END SAVE
-}); // END POST Route
-
 /** ---------- MONGOOSE ------------ **/
 var mongoose = require('mongoose');
 // gamestop is the name of our database
