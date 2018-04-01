@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
 import StudentForm from '../StudentForm/StudentForm';
+import StudentList from '../StudentList/StudentList';
+
+let allStudents = [];
 
 class App extends Component {
   constructor() {
@@ -25,7 +28,11 @@ class App extends Component {
         // after successful post, get all students in the database:
         axios.get('/students')
           .then(result => {
-            console.log("new res", result);
+            // console.log("new res", result);
+            this.state.studentList = result.data;
+            console.log(this.state.studentList);
+            // let's try this:
+            // allStudents = this.state.studentList;
           })
           .catch(error => {
             console.log(error);
@@ -39,6 +46,11 @@ class App extends Component {
   }
 
   render() {
+    // Only called at beginning of script -- not on any changes:
+    // console.log(allStudents);
+    // const allStuds = this.state.studentList.map(stud => <li key={stud._id}> {stud.github} </li>);
+    // const allStudents = this.state.starObjs.map(star => <li key= {star.name}> { star.name } has a diameter of { star.diameter } </li>);
+
     return (
       <div className="App">
         <header className="App-header">
@@ -48,6 +60,8 @@ class App extends Component {
         <StudentForm addStudent={this.addStudent}/>
 
         <p>Student list goes here.</p>
+
+        <StudentList studs = { this.state.studentList.map(stud => <li key={stud._id}> {stud.github} </li>) }/>
       </div>
     );
   }
