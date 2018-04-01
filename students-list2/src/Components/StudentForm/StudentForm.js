@@ -27,6 +27,7 @@ class StudentForm extends Component {
     handleSubmit(event) {
         event.preventDefault();
         this.props.addStudent(this.state);
+        console.log(this.state);
         this.clearStudentFields();
     }
 

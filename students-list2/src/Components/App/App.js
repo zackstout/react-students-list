@@ -1,10 +1,11 @@
+
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
 import StudentForm from '../StudentForm/StudentForm';
 import StudentList from '../StudentList/StudentList';
+import InfoList from '../InfoList/InfoList';
 
-let allStudents = [];
 
 class App extends Component {
   constructor() {
@@ -12,10 +13,52 @@ class App extends Component {
     // Keep track of the student list
     this.state = {
       studentList: [],
+      currentInfo: {
+        avatar_url: '',
+        public_repos: 0,
+        following: 0,
+        followers: 0,
+        bio: '',
+        followers_url: ''
+      }
     };
 
-    // Give our function access to `this`
+    // Give our functions access to `this`:
     this.addStudent = this.addStudent.bind(this);
+    this.getStudents = this.getStudents.bind(this);
+    this.getInfo = this.getInfo.bind(this);
+  }
+
+  getStudents() {
+    axios.get('/students')
+    .then(result => {
+      this.setState({ studentList: result.data });
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }
+
+  getInfo(student) {
+    console.log('clicking', student);
+    var url = 'https://api.github.com/users/' + student + '?access_token=913f20e25e454b699cbf7b4d5f3ae7fd516cafc4';
+
+    axios.get(url)
+    .then(result => {
+      console.log(result);
+      this.setState({ currentInfo: {
+            avatar_url: result.data.avatar_url,
+            followers: result.data.followers,
+            following: result.data.following,
+            public_repos: result.data.public_repos,
+            bio: result.data.bio,
+            followers_url: result.data.followers_url
+          }});
+      // this.setState({ studentList: result.data });
+    })
+    .catch(error => {
+      console.log(error);
+    });
   }
 
   // This function is called by the StudentForm when the submit button is pressed
@@ -29,10 +72,11 @@ class App extends Component {
         axios.get('/students')
           .then(result => {
             // console.log("new res", result);
-            this.state.studentList = result.data;
-            console.log(this.state.studentList);
-            // let's try this:
-            // allStudents = this.state.studentList;
+
+            // Ahhhhh don't set state directly! thank you react!
+            // this.state.studentList = result.data;
+            this.setState({ studentList: result.data });
+
           })
           .catch(error => {
             console.log(error);
@@ -45,12 +89,17 @@ class App extends Component {
 
   }
 
-  render() {
-    // Only called at beginning of script -- not on any changes:
-    // console.log(allStudents);
-    // const allStuds = this.state.studentList.map(stud => <li key={stud._id}> {stud.github} </li>);
-    // const allStudents = this.state.starObjs.map(star => <li key= {star.name}> { star.name } has a diameter of { star.diameter } </li>);
+  componentDidMount() {
+    this.getStudents();
+  }
 
+  render() {
+    // Only called at beginning of script -- not on any changes. No....it's called a lot.
+   
+    // It seems we can't pass in a parameter to the onClick here.... but then how do we pass it in?
+    // Ahhhh you've done it again SO! pass in an *arrow function* (?!?!)
+    const studs = this.state.studentList.map(stud => <li key={stud._id}> {stud.github} <button onClick={ () => this.getInfo(stud.github) }>More info</button> </li>);
+    // const info = this.state.currentInfo
     return (
       <div className="App">
         <header className="App-header">
@@ -58,10 +107,13 @@ class App extends Component {
         </header>
         <br/>
         <StudentForm addStudent={this.addStudent}/>
+        <h3>Secret Info</h3>
+        <InfoList info= { this.state.currentInfo }/>
 
-        <p>Student list goes here.</p>
-
-        <StudentList studs = { this.state.studentList.map(stud => <li key={stud._id}> {stud.github} </li>) }/>
+        <br/>
+        <h3>Student list goes here.</h3>
+      
+        <StudentList studs={ studs } gettingInfo={this.getInfo}/>
       </div>
     );
   }
