@@ -6,7 +6,6 @@ import StudentForm from '../StudentForm/StudentForm';
 import StudentList from '../StudentList/StudentList';
 import InfoList from '../InfoList/InfoList';
 
-
 class App extends Component {
   constructor() {
     super();
@@ -19,7 +18,9 @@ class App extends Component {
         following: 0,
         followers: 0,
         bio: '',
-        followers_url: ''
+        followers_url: '',
+        repos_url: '',
+        repos: []
       }
     };
 
@@ -44,21 +45,29 @@ class App extends Component {
     var url = 'https://api.github.com/users/' + student + '?access_token=913f20e25e454b699cbf7b4d5f3ae7fd516cafc4';
 
     axios.get(url)
-    .then(result => {
-      console.log(result);
-      this.setState({ currentInfo: {
-            avatar_url: result.data.avatar_url,
-            followers: result.data.followers,
-            following: result.data.following,
-            public_repos: result.data.public_repos,
-            bio: result.data.bio,
-            followers_url: result.data.followers_url
-          }});
-      // this.setState({ studentList: result.data });
-    })
-    .catch(error => {
-      console.log(error);
-    });
+      .then(result => {
+        console.log(result);
+  
+        axios.get(result.data.repos_url)
+          .then(res => {
+            console.log(res);
+            var repos = res.data;
+            this.setState({ currentInfo: {
+              avatar_url: result.data.avatar_url,
+              followers: result.data.followers,
+              following: result.data.following,
+              public_repos: result.data.public_repos,
+              bio: result.data.bio,
+              followers_url: result.data.followers_url,
+              repos_url: result.data.repos_url,
+              repos: repos
+            }})
+          })
+        // this.setState({ studentList: result.data });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   // This function is called by the StudentForm when the submit button is pressed
@@ -89,6 +98,7 @@ class App extends Component {
 
   }
 
+  // similar to jQuery's document.ready:
   componentDidMount() {
     this.getStudents();
   }

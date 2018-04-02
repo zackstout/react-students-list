@@ -7,6 +7,8 @@ class InfoList extends Component {
   render() {
     console.log(this.props.info);
 
+    const repos = this.props.info.repos.map(repo => <li key={repo.id}> { repo.name } </li> );
+
     if (this.props.info.avatar_url) {
         return (
             <div>
@@ -30,6 +32,13 @@ class InfoList extends Component {
             <p>
                 Followers_url: { this.props.info.followers_url } 
             </p>
+         
+                Repos: 
+                <ul>
+                    { repos }
+                </ul>
+
+     
             </div>
         );
     } else {
